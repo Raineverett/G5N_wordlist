@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vocab Practice — Immersion Grade 5</title>
+<style>
+  :root {
+    --bg: #f8f7fa;
+    --card: #ffffff;
+    --primary: #6d4aff;
+    --primary-dark: #5638d6;
+    --text: #1c1830;
+    --muted: #6b6780;
+    --border: #e3e0ee;
+    --ok: #16855a;
+    --bad: #c0392b;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 19px;
+  }
+
+  header {
+    background: linear-gradient(135deg, var(--primary), #8b6cff);
+    color: #fff;
+    padding: 28px 20px 24px;
+    text-align: center;
+  }
+  header h1 { margin: 0 0 8px; font-size: 34px; letter-spacing: .5px; }
+  header p { margin: 0; opacity: .92; font-size: 18px; }
+
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 22px 16px 70px; }
+
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    margin-bottom: 20px;
+  }
+
+  /* ========== 篩選器 ========== */
+  .filter-section {
+    margin-bottom: 20px;
+  }
+
+  .filter-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .checkbox-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: #efedf7;
+    border: 2px solid transparent;
+    border-radius: 11px;
+    cursor: pointer;
+    transition: .15s;
+    font-weight: 600;
+    font-size: 17px;
+  }
+  .checkbox-label:hover { border-color: var(--primary); }
+  .checkbox-label.selected {
+    border-color: var(--primary);
+    background: rgba(109,74,255,.12);
+  }
+  .checkbox-label input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--primary);
+    cursor: pointer;
+  }
+
+  .week-section { margin-top: 24px; }
+
+  .week-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .category-filter {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--border);
+  }
+
+  .cat-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: #faf9fd;
+    border: 2px solid var(--border);
+    border-radius: 9px;
+    cursor: pointer;
+    transition: .15s;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  .cat-option:hover { border-color: var(--primary); }
+  .cat-option.active {
+    border-color: var(--primary);
+    background: rgba(109,74,255,.12);
+  }
+  .cat-option input { width: 18px; height: 18px; accent-color: var(--primary); }
+
+  .quick-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .quick-actions .btn { padding: 8px 16px; font-size: 16px; }
+
+  /* ========== 速度控制 ========== */
+  .speed-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    padding: 12px;
+    background: #faf9fd;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .speed-label {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .speed-group {
+    display: inline-flex;
+    background: #efedf7;
+    padding: 5px;
+    border-radius: 11px;
+    gap: 4px;
+  }
+  .speed-group button {
+    border: 0;
+    background: transparent;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: inherit;
+    transition: .15s;
+  }
+  .speed-group button.active {
+    background: #fff;
+    color: var(--primary);
+    box-shadow: 0 1px 4px rgba(109,74,255,.2);
+  }
+
+  /* ========== 控制按鈕 ========== */
+  .controls {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 18px;
+  }
+
+  .btn {
+    border: 0;
+    border-radius: 11px;
+    padding: 13px 22px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: .15s;
+  }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-ghost { background: #efedf7; color: var(--primary); }
+  .btn-ghost:hover { background: #e4e0f5; }
+  .btn:disabled { opacity: .45; cursor: default; }
+
+  .stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px dashed var(--border);
+    font-size: 17px;
+    color: var(--muted);
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .stats label { cursor: pointer; }
+  .stats input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--primary); vertical-align: -3px; }
+
+  /* ========== 測驗區 ========== */
+  .quiz-area {
+    text-align: center;
+    padding: 32px 22px;
+    background: linear-gradient(to bottom, #faf9fd, #f5f4f9);
+    border-radius: var(--radius);
+  }
+
+  .quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+    font-size: 18px;
+    color: var(--muted);
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .score-display { font-size: 24px; font-weight: 800; }
+  .score-display b { color: var(--primary); }
+
+  .play-section { margin: 26px 0; }
+
+  .play-btn {
+    width: 116px;
+    height: 116px;
+    border-radius: 50%;
+    border: 0;
+    background: var(--primary);
+    color: #fff;
+    font-size: 44px;
+    cursor: pointer;
+    transition: .18s;
+    box-shadow: 0 6px 26px rgba(109,74,255,.35);
+    margin-bottom: 14px;
+  }
+  .play-btn:hover { transform: scale(1.05); }
+  .play-btn:active { transform: scale(.96); }
+  .play-btn:disabled { opacity: .4; cursor: default; transform: none; }
+  .play-btn.playing { animation: pulse 1s infinite; }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 6px 26px rgba(109,74,255,.35); }
+    50% { box-shadow: 0 6px 34px rgba(109,74,255,.6); }
+  }
+
+  .replay-btn {
+    display: block;
+    margin: 0 auto 22px;
+    background: #fff;
+    border: 2px solid var(--border);
+    color: var(--primary);
+    font-size: 17px;
+    padding: 11px 22px;
+    border-radius: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .replay-btn:hover { border-color: var(--primary); }
+
+  .hint-toggle { margin-bottom: 18px; }
+  .hint-toggle label { font-size: 18px; color: var(--muted); cursor: pointer; }
+  .hint-toggle input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--primary); vertical-align: -3px; }
+
+  .hint-text {
+    font-size: 24px;
+    color: var(--text);
+    min-height: 38px;
+    margin-bottom: 22px;
+    font-weight: 700;
+  }
+
+  .answer-section { max-width: 480px; margin: 0 auto; }
+
+  .answer-input {
+    width: 100%;
+    padding: 20px 22px;
+    border: 3px solid var(--border);
+    border-radius: 13px;
+    font-size: 30px;
+    font-family: inherit;
+    text-align: center;
+    letter-spacing: 2px;
+    transition: .2s;
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+  .answer-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 5px rgba(109,74,255,.15);
+  }
+  .answer-input.correct { border-color: var(--ok); background: #f1fbf6; }
+  .answer-input.wrong { border-color: var(--bad); background: #fdf2f1; animation: shake .4s; }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+  }
+
+  .feedback {
+    min-height: 40px;
+    font-size: 24px;
+    font-weight: 800;
+    margin: 18px 0;
+  }
+  .feedback.ok { color: var(--ok); }
+  .feedback.bad { color: var(--bad); }
+
+  .kbd-tip {
+    font-size: 15px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .kbd-tip kbd {
+    background: #efedf7;
+    border: 1px solid var(--border);
+    border-bottom-width: 2px;
+    border-radius: 5px;
+    padding: 1px 7px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary);
+  }
+
+  .answer-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-next {
+    background: var(--primary);
+    color: #fff;
+  }
+  .btn-next:hover { background: var(--primary-dark); }
+
+  /* ========== 結果 ========== */
+  .result-card {
+    display: none;
+    text-align: center;
+    padding: 34px;
+    background: #fff;
+    border-radius: var(--radius);
+    border: 3px solid var(--primary);
+  }
+  .result-card.show { display: block; }
+  .result-title { font-size: 32px; font-weight: 800; margin-bottom: 14px; color: var(--primary); }
+  .result-score { font-size: 64px; font-weight: 900; color: var(--primary); margin: 18px 0; }
+  .result-detail { font-size: 20px; color: var(--muted); margin-bottom: 24px; }
+
+  /* ========== 單字列表：一行 5 個 ========== */
+  .list-view {
+    display: none;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 20px;
+  }
+  .list-view.show { display: grid; }
+
+  @media (max-width: 1100px) { .list-view { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  @media (max-width: 900px)  { .list-view { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 650px)  { .list-view { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+  .word-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 16px;
+    cursor: pointer;
+    transition: .15s;
+    text-align: center;
+    position: relative;
+  }
+  .word-item:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 14px rgba(109,74,255,.15);
+  }
+  .word-item:active { transform: scale(.98); }
+  .word-item .series-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+  }
+  .word-item .series-part { background: #efedf7; color: var(--primary); }
+  .word-item .series-week { background: #fff3cd; color: #856404; }
+  .word-item .word {
+    font-size: 27px;
+    font-weight: 800;
+    margin-bottom: 6px;
+    word-break: break-word;
+  }
+  .word-item .cn {
+    font-size: 21px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .word-item .meta {
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-top: 6px;
+  }
+  .word-item.playing { border-color: var(--primary); background: #f7f5ff; }
+
+  .empty-msg { text-align: center; padding: 44px; color: var(--muted); font-size: 20px; }
+
+  footer { text-align: center; font-size: 15px; color: var(--muted); padding: 24px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📚 Vocabulary Practice</h1>
+  <p>Immersion Grade 5 — First Semester</p>
+</header>
+
+<div class="wrap">
+
+  <!-- 篩選區 -->
+  <div class="panel">
+
+    <!-- Part 1-4 選擇 -->
+    <div class="filter-section">
+      <div class="filter-title">📖 選擇單字範圍</div>
+
+      <div class="checkbox-grid" id="partGrid"></div>
+
+      <div class="week-section">
+        <div class="checkbox-grid" id="weekGrid"></div>
+      </div>
+
+      <div class="category-filter">
+        <div class="checkbox-grid" id="catGrid"></div>
+      </div>
+
+      <div class="quick-actions">
+        <button class="btn btn-ghost" onclick="selectAllAll()">✓ 全選</button>
+        <button class="btn btn-ghost" onclick="selectAllNone()">✗ 取消全選</button>
+        <button class="btn btn-ghost" onclick="invertSelection()">🔄 反轉選擇</button>
+        <button class="btn btn-ghost" onclick="selectOnlyParts()">📚 僅 Parts</button>
+        <button class="btn btn-ghost" onclick="selectOnlyWeeks()">📅 僅 Weeks</button>
+      </div>
+    </div>
+
+    <!-- 全域播放速度 -->
+    <div class="speed-row">
+      <span class="speed-label">🐢 播放速度</span>
+      <div class="speed-group" id="speedGroup">
+        <button data-rate="0.5" onclick="setSpeed(0.5, this)">0.5×</button>
+        <button data-rate="0.7" onclick="setSpeed(0.7, this)">0.7×</button>
+        <button data-rate="1" class="active" onclick="setSpeed(1, this)">1.0×</button>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-primary" onclick="startQuiz()">🎯 開始測驗</button>
+      <button class="btn btn-ghost" onclick="toggleListView()">📋 單字列表</button>
+      <button class="btn btn-ghost" onclick="shuffleAndRestart()" id="btnShuffle" disabled>🔀 隨機排序</button>
+    </div>
+
+    <div class="stats">
+      <span id="statInfo">請選擇至少一個單字範圍</span>
+    </div>
+  </div>
+
+  <!-- 測驗區 -->
+  <div id="quizArea" class="quiz-area panel">
+    <div class="quiz-header">
+      <span id="quizProgress">尚未開始</span>
+      <span class="score-display">得分：<b id="scoreDisplay">0</b></span>
+    </div>
+
+    <div class="play-section">
+      <button class="play-btn" id="playBtn" onclick="playCurrent()" disabled>🔊</button>
+      <button class="replay-btn" onclick="playCurrent()" id="btnReplay" disabled>🔁 再播一次</button>
+
+      <div class="hint-toggle">
+        <label><input type="checkbox" id="chkHint" onchange="updateHint()"> 顯示中文提示</label>
+      </div>
+      <div class="hint-text" id="hintText"></div>
+    </div>
+
+    <div class="answer-section">
+      <div class="kbd-tip"><kbd>Enter</kbd> 送出答案　<kbd>N</kbd> 下一題</div>
+      <input type="text" class="answer-input" id="answerInput"
+             placeholder="輸入拼字…" autocomplete="off"
+             autocapitalize="off" spellcheck="false" disabled>
+
+      <div class="feedback" id="feedback"></div>
+
+      <div class="answer-buttons">
+        <button class="btn btn-ghost" onclick="checkAnswer()">送出</button>
+        <button class="btn btn-ghost" onclick="showAnswer()" id="btnShow">💡 顯示答案</button>
+        <button class="btn btn-next" onclick="nextWord()" id="btnNext" style="display:none">下一題 →（N）</button>
+      </div>
+    </div>
+
+    <div class="result-card" id="resultCard">
+      <div class="result-title">🎉 測驗完成！</div>
+      <div class="result-score" id="resultScore">0 / 0</div>
+      <div class="result-detail" id="resultDetail"></div>
+      <div class="controls">
+        <button class="btn btn-primary" onclick="restartQuiz()">再玩一次</button>
+        <button class="btn btn-ghost" onclick="closeResult()">返回</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 單字列表 -->
+  <div id="listView" class="list-view"></div>
+
+</div>
+
+<footer>音檔來源：Merriam-Webster 真人錄音 · Part 1-4 + Week 1-18</footer>
+
+<!-- 資料源 -->
+<script src="part_vocab_data.js"></script>
+<script src="week_vocab_data.js"></script>
+
+<script>
+/* ================= 全域 ================= */
+let ALL_WORDS = [];
+let PART_WORDS = [];
+let WEEK_WORDS = [];
+let filteredWords = [];
+let quizOrder = [];
+let quizIdx = 0;
+let score = 0;
+let currentAudio = null;
+let playingCardEl = null;
+let isQuizActive = false;
+let playbackRate = 1.0;
+let waitingNext = false;   // 是否已作答，等待按 N / 點「下一題」
+
+// 篩選狀態
+let selectedParts = new Set();
+let selectedWeeks = new Set();
+let selectedCats = new Set();
+
+const uniq = arr => [...new Set(arr)];
+
+/* ================= 初始化 ================= */
+document.addEventListener('DOMContentLoaded', function() {
+  // 載入 Part 資料
+  if (typeof PART_VOCAB_DATA !== 'undefined' && Array.isArray(PART_VOCAB_DATA)) {
+    PART_WORDS = PART_VOCAB_DATA.map((w, i) => ({
+      ...w,
+      series: 'part',
+      id: i + 1
+    }));
+    console.log(`Part 資料載入：${PART_WORDS.length} 筆`);
+  } else {
+    console.warn('⚠️ 找不到 PART_VOCAB_DATA');
+  }
+
+  // 載入 Week 資料
+  if (typeof WEEK_VOCAB_DATA !== 'undefined' && Array.isArray(WEEK_VOCAB_DATA)) {
+    WEEK_WORDS = WEEK_VOCAB_DATA.map(w => ({...w, series: 'week'}));
+    console.log(`Week 資料載入：${WEEK_WORDS.length} 筆`);
+  } else {
+    console.warn('⚠️ 找不到 WEEK_VOCAB_DATA');
+  }
+
+  ALL_WORDS = [...PART_WORDS, ...WEEK_WORDS];
+  console.log(`總計：${ALL_WORDS.length} 個單字`);
+
+  // 建立篩選器
+  buildPartFilters();
+  buildWeekFilters();
+  buildCatFilters();
+
+  // 預設全選
+  selectAllAll();
+
+  // 唯一的鍵盤處理（避免重複綁定）
+  document.addEventListener('keydown', handleKeydown);
+});
+
+/* ========== 篩選器構建 ========== */
+function buildPartFilters() {
+  const container = document.getElementById('partGrid');
+  if (!container) return;
+
+  const parts = ['1', '2', '3', '4'];
+  const counts = {};
+  parts.forEach(p => {
+    counts[p] = PART_WORDS.filter(w => w.part === p).length;
+  });
+
+  container.innerHTML = '<div class="filter-title">📖 Part 1-4</div>' +
+    parts.map(p => `
+      <label class="checkbox-label" id="label-part-${p}">
+        <input type="checkbox" data-type="part" data-value="${p}" onchange="onFilterChange()">
+        Part ${p} (${counts[p]})
+      </label>
+    `).join('');
+}
+
+function buildWeekFilters() {
+  const container = document.getElementById('weekGrid');
+  if (!container) return;
+
+  const weeks = uniq(WEEK_WORDS.map(w => String(w.week))).sort((a, b) => Number(a) - Number(b));
+  const counts = {};
+  weeks.forEach(w => {
+    counts[w] = WEEK_WORDS.filter(x => String(x.week) === w).length;
+  });
+
+  container.innerHTML = '<div class="filter-title">📅 Week 1-18</div>' +
+    weeks.map(w => `
+      <label class="checkbox-label" id="label-week-${w}">
+        <input type="checkbox" data-type="week" data-value="${w}" onchange="onFilterChange()">
+        Week ${w} (${counts[w]})
+      </label>
+    `).join('');
+}
+
+function buildCatFilters() {
+  const container = document.getElementById('catGrid');
+  if (!container) return;
+
+  const cats = uniq(WEEK_WORDS.map(w => w.category).filter(Boolean)).sort();
+
+  container.innerHTML = '<div class="filter-title">🏷️ 分類（僅限 Week）</div>' +
+    '<div style="margin-bottom:8px;font-size:15px;color:var(--muted)">取消全選可只看指定類別</div>' +
+    cats.map(c => `
+      <label class="cat-option active" id="label-cat-${escapeAttr(c)}">
+        <input type="checkbox" data-type="cat" data-value="${escapeAttr(c)}" checked onchange="onFilterChange()">
+        ${escapeHtml(c)}
+      </label>
+    `).join('');
+}
+
+function escapeAttr(s) { return String(s).replace(/"/g, '&quot;'); }
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+
+/* ========== 篩選邏輯 ========== */
+function onFilterChange() {
+  // 更新選擇集
+  selectedParts.clear();
+  selectedWeeks.clear();
+  selectedCats.clear();
+
+  document.querySelectorAll('[data-type="part"][type="checkbox"]').forEach(cb => {
+    if (cb.checked) selectedParts.add(cb.dataset.value);
+  });
+
+  document.querySelectorAll('[data-type="week"][type="checkbox"]').forEach(cb => {
+    if (cb.checked) selectedWeeks.add(cb.dataset.value);
+  });
+
+  document.querySelectorAll('[data-type="cat"][type="checkbox"]').forEach(cb => {
+    if (cb.checked) selectedCats.add(cb.dataset.value);
+  });
+
+  // 更新視覺樣式
+  document.querySelectorAll('[data-type="part"][type="checkbox"]').forEach(cb => {
+    const label = document.getElementById(`label-part-${cb.dataset.value}`);
+    if (label) label.classList.toggle('selected', cb.checked);
+  });
+
+  document.querySelectorAll('[data-type="week"][type="checkbox"]').forEach(cb => {
+    const label = document.getElementById(`label-week-${cb.dataset.value}`);
+    if (label) label.classList.toggle('selected', cb.checked);
+  });
+
+  document.querySelectorAll('[data-type="cat"][type="checkbox"]').forEach(cb => {
+    const label = document.getElementById(`label-cat-${cb.dataset.value}`);
+    if (label) label.classList.toggle('active', cb.checked);
+  });
+
+  filterWords();
+  updateStats();
+  renderList();
+}
+
+function filterWords() {
+  let pool = [];
+
+  // 加入 Parts
+  if (selectedParts.size > 0) {
+    pool.push(...PART_WORDS.filter(w => selectedParts.has(w.part)));
+  }
+
+  // 加入 Weeks
+  if (selectedWeeks.size > 0) {
+    let weekPool = WEEK_WORDS.filter(w => selectedWeeks.has(String(w.week)));
+
+    // 如果選了分類，再加篩選
+    if (selectedCats.size > 0) {
+      weekPool = weekPool.filter(w => selectedCats.has(w.category));
+    }
+
+    pool.push(...weekPool);
+  }
+
+  filteredWords = pool;
+}
+
+function updateStats() {
+  const n = filteredWords.length;
+  if (n === 0) {
+    document.getElementById('statInfo').textContent = '⚠️ 請選擇至少一個單字範圍';
+    document.getElementById('btnShuffle').disabled = true;
+    document.getElementById('quizArea').style.opacity = '0.5';
+  } else {
+    const partsCount = selectedParts.size;
+    const weeksCount = selectedWeeks.size;
+    const catInfo = selectedCats.size > 0 && selectedCats.size < 3 ? `(${selectedCats.size} 類別)` : '';
+    document.getElementById('statInfo').textContent =
+      `共 ${n} 個單字 ${catInfo} (${partsCount} Parts + ${weeksCount} Weeks)`;
+    document.getElementById('btnShuffle').disabled = false;
+    document.getElementById('quizArea').style.opacity = '1';
+  }
+}
+
+// 快速操作
+function setAllCheckboxes(state) {
+  document.querySelectorAll('[data-type][type="checkbox"]').forEach(cb => { cb.checked = state; });
+}
+
+function setCheckboxesByType(type, state) {
+  document.querySelectorAll(`[data-type="${type}"][type="checkbox"]`).forEach(cb => { cb.checked = state; });
+}
+
+function selectAllAll() {
+  setAllCheckboxes(true);
+  onFilterChange();
+}
+
+function selectAllNone() {
+  setAllCheckboxes(false);
+  onFilterChange();
+}
+
+function invertSelection() {
+  document.querySelectorAll('[data-type][type="checkbox"]').forEach(cb => { cb.checked = !cb.checked; });
+  onFilterChange();
+}
+
+function selectOnlyParts() {
+  setAllCheckboxes(false);
+  setCheckboxesByType('part', true);
+  onFilterChange();
+}
+
+function selectOnlyWeeks() {
+  setAllCheckboxes(false);
+  setCheckboxesByType('week', true);
+  onFilterChange();
+}
+
+/* ========== 速度控制 ========== */
+function setSpeed(rate, btnEl) {
+  playbackRate = rate;
+  document.querySelectorAll('#speedGroup button').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+  if (currentAudio) currentAudio.playbackRate = rate;
+}
+
+/* ========== 播放 ========== */
+function stopAudio() {
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+  }
+  clearPlayingMark();
+}
+
+function clearPlayingMark() {
+  document.getElementById('playBtn').classList.remove('playing');
+  if (playingCardEl) {
+    playingCardEl.classList.remove('playing');
+    playingCardEl = null;
+  }
+}
+
+function playAudio(src, opts) {
+  stopAudio();
+  if (!src) return;
+
+  currentAudio = new Audio(src);
+  currentAudio.playbackRate = playbackRate;
+
+  const btnPlay = document.getElementById('playBtn');
+  if (opts && opts.quiz) {
+    btnPlay.classList.add('playing');
+    currentAudio.addEventListener('ended', () => btnPlay.classList.remove('playing'));
+  } else if (opts && opts.cardEl) {
+    playingCardEl = opts.cardEl;
+    opts.cardEl.classList.add('playing');
+    currentAudio.addEventListener('ended', () => {
+      if (playingCardEl === opts.cardEl) {
+        opts.cardEl.classList.remove('playing');
+        playingCardEl = null;
+      }
+    });
+  }
+  currentAudio.play().catch(err => console.warn('播放失敗:', err));
+}
+
+function playCurrent() {
+  if (!isQuizActive || quizIdx >= quizOrder.length) return;
+  playAudio(quizOrder[quizIdx].audio, { quiz: true });
+}
+
+function playOne(word, cardEl) {
+  playAudio(word.audio, { cardEl: cardEl });
+}
+
+/* ========== 測驗 ========== */
+function startQuiz() {
+  if (!filteredWords.length) {
+    alert('請選擇篩選條件！');
+    return;
+  }
+
+  quizOrder = filteredWords.slice();
+  // Fisher-Yates shuffle
+  for (let i = quizOrder.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [quizOrder[i], quizOrder[j]] = [quizOrder[j], quizOrder[i]];
+  }
+
+  quizIdx = 0;
+  score = 0;
+  isQuizActive = true;
+
+  document.getElementById('btnShuffle').disabled = false;
+  document.getElementById('resultCard').classList.remove('show');
+  document.getElementById('quizArea').style.display = 'block';
+  document.getElementById('listView').classList.remove('show');
+
+  showQuestion();
+}
+
+function showQuestion() {
+  const input = document.getElementById('answerInput');
+  const feedback = document.getElementById('feedback');
+
+  input.value = '';
+  input.className = 'answer-input';
+  input.disabled = false;
+  input.focus();
+  feedback.textContent = '';
+  feedback.className = 'feedback';
+  waitingNext = false;
+  document.getElementById('btnNext').style.display = 'none';
+  document.getElementById('btnShow').style.display = 'inline-block';
+  document.getElementById('playBtn').disabled = false;
+  document.getElementById('btnReplay').disabled = false;
+
+  const w = quizOrder[quizIdx];
+  const loc = w.series === 'part' ? `Part ${w.part}` : `Week ${w.week}`;
+  document.getElementById('quizProgress').textContent =
+    `第 ${quizIdx + 1} 題 / 共 ${quizOrder.length} 題 (${loc})`;
+  updateScore();
+  updateHint();
+
+  setTimeout(playCurrent, 300);
+}
+
+function updateHint() {
+  const chk = document.getElementById('chkHint');
+  const hintText = document.getElementById('hintText');
+  if (!isQuizActive || quizIdx >= quizOrder.length) {
+    hintText.textContent = '';
+    return;
+  }
+  hintText.textContent = chk.checked ? quizOrder[quizIdx].cn : '';
+}
+
+function checkAnswer() {
+  // 已作答過就不重複處理（防止 Enter 連按導致重複計分）
+  if (!isQuizActive || quizIdx >= quizOrder.length || waitingNext) return;
+
+  const input = document.getElementById('answerInput');
+  const feedback = document.getElementById('feedback');
+  const target = quizOrder[quizIdx].word;
+  const guess = input.value.trim();
+  if (!guess) return;
+
+  const norm = s => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const isCorrect = norm(guess) === norm(target);
+
+  if (isCorrect) {
+    input.className = 'answer-input correct';
+    feedback.textContent = '✓ 正確！';
+    feedback.className = 'feedback ok';
+    score++;
+    updateScore();
+  } else {
+    input.className = 'answer-input wrong';
+    feedback.textContent = `✗ 正確答案是：${target}`;
+    feedback.className = 'feedback bad';
+  }
+
+  // 鎖定：不自動跳題，等使用者按 N 或點「下一題」
+  input.disabled = true;
+  waitingNext = true;
+  document.getElementById('btnShow').style.display = 'none';
+  document.getElementById('btnNext').style.display = 'inline-block';
+  document.getElementById('btnNext').focus();
+}
+
+function showAnswer() {
+  if (!isQuizActive || quizIdx >= quizOrder.length) return;
+  const target = quizOrder[quizIdx].word;
+  document.getElementById('answerInput').value = target;
+  document.getElementById('answerInput').className = 'answer-input';
+  document.getElementById('btnShow').style.display = 'none';
+  document.getElementById('btnNext').style.display = 'inline-block';
+  document.getElementById('btnNext').focus();
+  document.getElementById('answerInput').disabled = true;
+  waitingNext = true;
+}
+
+function nextWord() {
+  if (!isQuizActive) return;
+  quizIdx++;
+  if (quizIdx >= quizOrder.length) finishQuiz();
+  else showQuestion();
+}
+
+function updateScore() {
+  document.getElementById('scoreDisplay').textContent = score;
+}
+
+function finishQuiz() {
+  isQuizActive = false;
+  waitingNext = false;
+  document.getElementById('answerInput').disabled = true;
+  document.getElementById('playBtn').disabled = true;
+  document.getElementById('btnReplay').disabled = true;
+
+  const percent = Math.round(score / quizOrder.length * 100);
+  document.getElementById('resultScore').textContent = `${score} / ${quizOrder.length}`;
+
+  let msg = percent >= 90 ? '🏆 太棒了！'
+          : percent >= 70 ? '👍 不錯哦！'
+          : percent >= 50 ? '🙂 繼續努力！'
+          : '💪 再接再厲！';
+
+  document.getElementById('resultDetail').textContent =
+    `${msg} 得分 ${percent}%（${quizOrder.length} 字）`;
+  document.getElementById('resultCard').classList.add('show');
+}
+
+function restartQuiz() {
+  document.getElementById('resultCard').classList.remove('show');
+  startQuiz();
+}
+
+function closeResult() {
+  document.getElementById('resultCard').classList.remove('show');
+}
+
+function shuffleAndRestart() {
+  startQuiz();
+}
+
+/* ========== 鍵盤處理（唯一入口） ========== */
+function handleKeydown(e) {
+  // 作答階段：Enter = 送出答案
+  if (e.key === 'Enter') {
+    if (!isQuizActive || waitingNext) return;
+    e.preventDefault();
+    checkAnswer();
+    return;
+  }
+
+  // 已作答：N = 下一題
+  if ((e.key === 'n' || e.key === 'N') && isQuizActive && waitingNext) {
+    e.preventDefault();
+    nextWord();
+  }
+}
+
+/* ========== 列表視圖 ========== */
+function toggleListView() {
+  const listView = document.getElementById('listView');
+  const quizArea = document.getElementById('quizArea');
+  if (listView.classList.contains('show')) {
+    listView.classList.remove('show');
+    quizArea.style.display = 'block';
+  } else {
+    renderList();
+    listView.classList.add('show');
+    quizArea.style.display = 'none';
+  }
+}
+
+function renderList() {
+  const listView = document.getElementById('listView');
+  if (!filteredWords.length) {
+    listView.innerHTML = '<div class="empty-msg">請選擇篩選條件</div>';
+    return;
+  }
+
+  window.listWordCache = filteredWords;
+
+  listView.innerHTML = filteredWords.map((w, i) => {
+    const seriesBadge = w.series === 'part'
+      ? `<span class="series-badge series-part">Part ${w.part}</span>`
+      : `<span class="series-badge series-week">Week ${w.week}</span>`;
+    const meta = w.series === 'week'
+      ? `${w.category}${w.subsection ? ` · ${w.subsection}` : ''}`
+      : '';
+    return `
+      <div class="word-item" onclick="playOne(window.listWordCache[${i}], this)">
+        ${seriesBadge}
+        <div class="word">${escapeHtml(w.word)}</div>
+        <div class="cn">${escapeHtml(w.cn)}</div>
+        ${meta ? `<div class="meta">${escapeHtml(meta)}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+</script>
+</body>
+</html>
