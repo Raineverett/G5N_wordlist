@@ -134,6 +134,49 @@
   }
   .quick-actions .btn { padding: 8px 16px; font-size: 16px; }
 
+  /* ========== 題數選擇 ========== */
+  .count-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    padding: 12px;
+    background: #faf9fd;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .count-label {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .count-group {
+    display: inline-flex;
+    background: #efedf7;
+    padding: 5px;
+    border-radius: 11px;
+    gap: 4px;
+  }
+  .count-group button {
+    border: 0;
+    background: transparent;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: inherit;
+    transition: .15s;
+  }
+  .count-group button.active {
+    background: #fff;
+    color: var(--primary);
+    box-shadow: 0 1px 4px rgba(109,74,255,.2);
+  }
+
   /* ========== 速度控制 ========== */
   .speed-row {
     display: flex;
@@ -213,8 +256,6 @@
     flex-wrap: wrap;
     gap: 10px;
   }
-  .stats label { cursor: pointer; }
-  .stats input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--primary); vertical-align: -3px; }
 
   /* ========== 測驗區 ========== */
   .quiz-area {
@@ -411,6 +452,7 @@
     font-weight: 700;
   }
   .word-item .series-part { background: #efedf7; color: var(--primary); }
+  .word-item .series-part5b { background: #e3f6ec; color: #16855a; }
   .word-item .series-week { background: #fff3cd; color: #856404; }
   .word-item .word {
     font-size: 27px;
@@ -440,7 +482,7 @@
 
 <header>
   <h1>📚 Vocabulary Practice</h1>
-  <p>Immersion Grade 5 — First Semester</p>
+  <p>Immersion Grade 5 — 5A Part 1-4 · 5B Part 1-4 · Week 1-18</p>
 </header>
 
 <div class="wrap">
@@ -468,6 +510,17 @@
         <button class="btn btn-ghost" onclick="invertSelection()">🔄 反轉選擇</button>
         <button class="btn btn-ghost" onclick="selectOnlyParts()">📚 僅 Parts</button>
         <button class="btn btn-ghost" onclick="selectOnlyWeeks()">📅 僅 Weeks</button>
+      </div>
+    </div>
+
+    <!-- 題數選擇 -->
+    <div class="count-row">
+      <span class="count-label">🔢 測驗題數</span>
+      <div class="count-group" id="countGroup">
+        <button data-count="15" onclick="setQuizCount(15, this)">15 題</button>
+        <button data-count="25" onclick="setQuizCount(25, this)">25 題</button>
+        <button data-count="50" onclick="setQuizCount(50, this)">50 題</button>
+        <button data-count="0" class="active" onclick="setQuizCount(0, this)">全部</button>
       </div>
     </div>
 
@@ -540,16 +593,18 @@
 
 </div>
 
-<footer>音檔來源：Merriam-Webster 真人錄音 · Part 1-4 + Week 1-18</footer>
+<footer>音檔來源：Merriam-Webster 真人錄音 · 5A Part 1-4 + 5B Part 1-4 + Week 1-18</footer>
 
 <!-- 資料源 -->
 <script src="part_vocab_data.js"></script>
+<script src="part5b_vocab_data.js"></script>
 <script src="week_vocab_data.js"></script>
 
 <script>
 /* ================= 全域 ================= */
 let ALL_WORDS = [];
 let PART_WORDS = [];
+let PART5B_WORDS = [];
 let WEEK_WORDS = [];
 let filteredWords = [];
 let quizOrder = [];
@@ -560,9 +615,11 @@ let playingCardEl = null;
 let isQuizActive = false;
 let playbackRate = 1.0;
 let waitingNext = false;   // 是否已作答，等待按 N / 點「下一題」
+let quizCount = 0;         // 測驗題數：15 / 25 / 50，0＝全部
 
 // 篩選狀態
 let selectedParts = new Set();
+let selectedParts5b = new Set();
 let selectedWeeks = new Set();
 let selectedCats = new Set();
 
@@ -570,16 +627,24 @@ const uniq = arr => [...new Set(arr)];
 
 /* ================= 初始化 ================= */
 document.addEventListener('DOMContentLoaded', function() {
-  // 載入 Part 資料
+  // 載入 5A Part 資料
   if (typeof PART_VOCAB_DATA !== 'undefined' && Array.isArray(PART_VOCAB_DATA)) {
     PART_WORDS = PART_VOCAB_DATA.map((w, i) => ({
       ...w,
       series: 'part',
       id: i + 1
     }));
-    console.log(`Part 資料載入：${PART_WORDS.length} 筆`);
+    console.log(`5A Part 資料載入：${PART_WORDS.length} 筆`);
   } else {
     console.warn('⚠️ 找不到 PART_VOCAB_DATA');
+  }
+
+  // 載入 5B Part 資料
+  if (typeof PART5B_VOCAB_DATA !== 'undefined' && Array.isArray(PART5B_VOCAB_DATA)) {
+    PART5B_WORDS = PART5B_VOCAB_DATA.map(w => ({...w, series: 'part5b'}));
+    console.log(`5B Part 資料載入：${PART5B_WORDS.length} 筆`);
+  } else {
+    console.warn('⚠️ 找不到 PART5B_VOCAB_DATA');
   }
 
   // 載入 Week 資料
@@ -590,7 +655,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.warn('⚠️ 找不到 WEEK_VOCAB_DATA');
   }
 
-  ALL_WORDS = [...PART_WORDS, ...WEEK_WORDS];
+  ALL_WORDS = [...PART_WORDS, ...PART5B_WORDS, ...WEEK_WORDS];
   console.log(`總計：${ALL_WORDS.length} 個單字`);
 
   // 建立篩選器
@@ -616,11 +681,24 @@ function buildPartFilters() {
     counts[p] = PART_WORDS.filter(w => w.part === p).length;
   });
 
-  container.innerHTML = '<div class="filter-title">📖 Part 1-4</div>' +
+  const counts5b = {};
+  parts.forEach(p => {
+    counts5b[p] = PART5B_WORDS.filter(w => w.part === p).length;
+  });
+
+  container.innerHTML =
+    '<div class="filter-title">📖 5A Part 1-4</div>' +
     parts.map(p => `
       <label class="checkbox-label" id="label-part-${p}">
         <input type="checkbox" data-type="part" data-value="${p}" onchange="onFilterChange()">
         Part ${p} (${counts[p]})
+      </label>
+    `).join('') +
+    '<div class="filter-title" style="margin-top:18px">📗 5B Part 1-4</div>' +
+    parts.map(p => `
+      <label class="checkbox-label" id="label-part5b-${p}">
+        <input type="checkbox" data-type="part5b" data-value="${p}" onchange="onFilterChange()">
+        5B Part ${p} (${counts5b[p]})
       </label>
     `).join('');
 }
@@ -667,11 +745,16 @@ function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;'
 function onFilterChange() {
   // 更新選擇集
   selectedParts.clear();
+  selectedParts5b.clear();
   selectedWeeks.clear();
   selectedCats.clear();
 
   document.querySelectorAll('[data-type="part"][type="checkbox"]').forEach(cb => {
     if (cb.checked) selectedParts.add(cb.dataset.value);
+  });
+
+  document.querySelectorAll('[data-type="part5b"][type="checkbox"]').forEach(cb => {
+    if (cb.checked) selectedParts5b.add(cb.dataset.value);
   });
 
   document.querySelectorAll('[data-type="week"][type="checkbox"]').forEach(cb => {
@@ -685,6 +768,11 @@ function onFilterChange() {
   // 更新視覺樣式
   document.querySelectorAll('[data-type="part"][type="checkbox"]').forEach(cb => {
     const label = document.getElementById(`label-part-${cb.dataset.value}`);
+    if (label) label.classList.toggle('selected', cb.checked);
+  });
+
+  document.querySelectorAll('[data-type="part5b"][type="checkbox"]').forEach(cb => {
+    const label = document.getElementById(`label-part5b-${cb.dataset.value}`);
     if (label) label.classList.toggle('selected', cb.checked);
   });
 
@@ -706,9 +794,14 @@ function onFilterChange() {
 function filterWords() {
   let pool = [];
 
-  // 加入 Parts
+  // 加入 5A Parts
   if (selectedParts.size > 0) {
     pool.push(...PART_WORDS.filter(w => selectedParts.has(w.part)));
+  }
+
+  // 加入 5B Parts
+  if (selectedParts5b.size > 0) {
+    pool.push(...PART5B_WORDS.filter(w => selectedParts5b.has(w.part)));
   }
 
   // 加入 Weeks
@@ -733,11 +826,12 @@ function updateStats() {
     document.getElementById('btnShuffle').disabled = true;
     document.getElementById('quizArea').style.opacity = '0.5';
   } else {
-    const partsCount = selectedParts.size;
+    const partsCount = selectedParts.size + selectedParts5b.size;
     const weeksCount = selectedWeeks.size;
     const catInfo = selectedCats.size > 0 && selectedCats.size < 3 ? `(${selectedCats.size} 類別)` : '';
+    const countInfo = quizCount > 0 && quizCount <= n ? ` · 每次 ${quizCount} 題` : '';
     document.getElementById('statInfo').textContent =
-      `共 ${n} 個單字 ${catInfo} (${partsCount} Parts + ${weeksCount} Weeks)`;
+      `共 ${n} 個單字 ${catInfo} (${partsCount} Parts + ${weeksCount} Weeks)${countInfo}`;
     document.getElementById('btnShuffle').disabled = false;
     document.getElementById('quizArea').style.opacity = '1';
   }
@@ -770,6 +864,7 @@ function invertSelection() {
 function selectOnlyParts() {
   setAllCheckboxes(false);
   setCheckboxesByType('part', true);
+  setCheckboxesByType('part5b', true);
   onFilterChange();
 }
 
@@ -777,6 +872,14 @@ function selectOnlyWeeks() {
   setAllCheckboxes(false);
   setCheckboxesByType('week', true);
   onFilterChange();
+}
+
+/* ========== 題數選擇 ========== */
+function setQuizCount(count, btnEl) {
+  quizCount = count;
+  document.querySelectorAll('#countGroup button').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+  updateStats();
 }
 
 /* ========== 速度控制 ========== */
@@ -844,12 +947,15 @@ function startQuiz() {
     return;
   }
 
-  quizOrder = filteredWords.slice();
-  // Fisher-Yates shuffle
-  for (let i = quizOrder.length - 1; i > 0; i--) {
+  // 先洗牌整個單字池，再依題數抽取（quizCount＝0 表示全部）
+  const shuffled = filteredWords.slice();
+  for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [quizOrder[i], quizOrder[j]] = [quizOrder[j], quizOrder[i]];
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
+  quizOrder = (quizCount > 0 && quizCount < shuffled.length)
+    ? shuffled.slice(0, quizCount)
+    : shuffled;
 
   quizIdx = 0;
   score = 0;
@@ -880,7 +986,9 @@ function showQuestion() {
   document.getElementById('btnReplay').disabled = false;
 
   const w = quizOrder[quizIdx];
-  const loc = w.series === 'part' ? `Part ${w.part}` : `Week ${w.week}`;
+  const loc = w.series === 'part' ? `5A Part ${w.part}`
+           : w.series === 'part5b' ? `5B Part ${w.part}`
+           : `Week ${w.week}`;
   document.getElementById('quizProgress').textContent =
     `第 ${quizIdx + 1} 題 / 共 ${quizOrder.length} 題 (${loc})`;
   updateScore();
@@ -1031,6 +1139,8 @@ function renderList() {
   listView.innerHTML = filteredWords.map((w, i) => {
     const seriesBadge = w.series === 'part'
       ? `<span class="series-badge series-part">Part ${w.part}</span>`
+      : w.series === 'part5b'
+      ? `<span class="series-badge series-part5b">5B Part ${w.part}</span>`
       : `<span class="series-badge series-week">Week ${w.week}</span>`;
     const meta = w.series === 'week'
       ? `${w.category}${w.subsection ? ` · ${w.subsection}` : ''}`
